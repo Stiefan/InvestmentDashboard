@@ -1,13 +1,14 @@
 from nvd3 import lineChart
+from getData import getData
 
 # Open File to write the D3 Graph
 output_file = open('test-nvd3.html', 'w')
 
-chart = lineChart(name="lineChart", x_is_date=False, x_axis_format="AM_PM")
+chart = lineChart(name="lineChart", x_is_date='true', x_axis_format="%Y%m%d")
 
-xdata = range(24)
-ydata = [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 4, 3, 3, 5, 7, 5, 3, 16, 6, 9, 15, 4, 12]
-ydata2 = [9, 8, 11, 8, 3, 7, 10, 8, 6, 6, 9, 6, 5, 4, 3, 10, 0, 6, 3, 1, 0, 0, 0, 1]
+xdata = [2348501600000]
+ydata = [0]
+ydata2 = [9]
 
 extra_serie = {"tooltip": {"y_start": "There are ", "y_end": " calls"}}
 chart.add_serie(y=ydata, x=xdata, name='sine', extra=extra_serie)

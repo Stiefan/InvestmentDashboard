@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
+    </head>
+    <body>
+        
+    
+
+<h2>discreteBarChart</h2>
+
+<div id="discretebarchart"><svg style="width:600px;height:400px;"></svg></div>
+
+
+    <script>
+
+
+
+                data_discretebarchart=[{"values": [{"y": 3, "x": 1338501600000}, {"y": 2, "x": 1339501600000}, {"y": 10, "x": 1340501600000}, {"y": 9, "x": 1341501600000}, {"y": 5, "x": 1342501600000}, {"y": 8, "x": 1343501600000}, {"y": 12, "x": 1344501600000}, {"y": 9, "x": 1345501600000}, {"y": 15, "x": 1346501600000}, {"y": 19, "x": 1347501600000}], "key": "Serie 1", "yAxis": "1"}];
+
+
+            nv.addGraph(function() {
+        var chart = nv.models.discreteBarChart();
+
+        chart.margin({top: 30, right: 60, bottom: 20, left: 60});
+
+        var datum = data_discretebarchart;
+
+
+
+                    chart.xAxis
+                .tickFormat(function(d) { return d3.time.format('%d-%b')(new Date(parseInt(d))) }
+);
+            chart.yAxis
+                .tickFormat(d3.format(',.0f'));
+
+    
+    
+
+        
+
+
+
+            d3.select('#discretebarchart svg')
+            .datum(datum)
+            .transition().duration(500)
+            .attr('width', 600)
+            .attr('height', 400)
+            .call(chart);
+
+    
+        });
+
+
+
+    </script>
+
+    </body>
+</html>
