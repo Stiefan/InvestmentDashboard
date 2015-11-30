@@ -11,9 +11,11 @@ import datetime as dt
 import pandas_datareader.data as web
 import json
 import time
-from nvd3 import lineChart
+import random
 
-# --- Classes ---
+from nvd3 import lineChart, scatterChart
+
+# --- Classes --- 
 
 class getData(object):
 
@@ -23,26 +25,48 @@ class getData(object):
 		self.date_start = date_start
 		self.date_end = date_end
 
-    def fromURL(self):
+    def getTickerData(self,ticker):
 
-        tickerData = web.DataReader(self.ticker, 'yahoo', self.date_start, self.date_end)
+        tickerData = web.DataReader(ticker, 'yahoo', self.date_start, self.date_end)
         return tickerData
 
-    def plotData(self,fromURL):
+    def calculateAverage(self,getTickerData):
+        pass
+
+    def plotData(self,getTickerData):
 
         output_file = open('ticker.html', 'w')    
         type = "lineChart"
-        chart = lineChart(name="ticker", x_is_date=True, x_axis_format="%Y-%m-%dT%H:%M:%S", height=450, width=1300)      
-        kwargs1 = {'color': 'black'}
+        chart = lineChart(name=type, x_is_date=True, x_axis_format="%Y-%m-%d", height=450, width=1300)      
         extra_serie = {"tooltip": {"y_start": "There is ", "y_end": " calls"}}
-        
-        # Get Timestamp and Y-Values
-        df = fromURL()  
-        timestamp = []
-        xdata = [time.mktime(s.timetuple()) * 1000 for s in df.index]
-        ydata = df['Open']
 
-        chart.add_serie(y=ydata, x=xdata, name=self.ticker, extra=extra_serie, **kwargs1)
+        # Get Timestamp and Y-Values
+        for idx,ticker in enumerate(self.ticker):
+            print ticker
+            df = getTickerData(ticker)  
+            timestamp = []
+            xdata = [time.mktime(s.timetuple()) * 1000 for s in df.index]
+            tickerData = df['Open']
+            color = "#%06x" % random.randint(0, 0xFFFFFF)
+            print color
+            chart.add_serie(y=tickerData, x=xdata, name=ticker, extra=extra_serie, **{'color': color})
+
+        chart.buildhtml()
+        output_file.write(chart.htmlcontent)
+        output_file.close()
+
+    def calculateCorrelation(self,getTickerData):
+
+        output_file = open('calculateCorrelation.html', 'w')    
+        type = "scatterChart"
+        chart = scatterChart(name=type, x_is_date=False, height=450, width=1300)      
+        extra_serie = {"tooltip": {"y_start": "", "y_end": " call"}}
+        kwargs2 = {'shape': 'cross', 'size': '10'}       
+        
+        dfAAPL = getTickerData('AAPL')['Open']
+        dfGOOG = getTickerData('GOOG')['Open']
+
+        chart.add_serie(y=dfGOOG, x=dfAAPL, name='Correlation', extra=extra_serie, **kwargs2)         
         chart.buildhtml()
         output_file.write(chart.htmlcontent)
         output_file.close()
@@ -61,12 +85,11 @@ class DateTimeJSONEncoder(json.JSONEncoder):
 # --- Main ---
 
 def main():
-    start = dt.datetime(2010,1,1)
+    start = dt.datetime(2015,1,1)
     end = dt.datetime(2015,11,29)
-    ticker = 'AAPL'
-    data = getData(ticker, start, end)
-
-    print data.plotData(data.fromURL)
+    tickers = ['AAPL','GOOG','TSLA']
+    data = getData(tickers, start, end)
+    print data.calculateCorrelation(data.getTickerData)
 
 if __name__ == "__main__":
     main()
